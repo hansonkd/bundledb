@@ -1,10 +1,16 @@
 # BundleDB
-Collections which automatically split as they grow.
+An embedded DB for Golang with collections that automatically split as they grow.
 
 BundleDB provides several abstractions of common collections which map onto a key-value store. It also looks to optimize reads and writes of collections which have small, nested and/or sequential keys. Writing one big row compared to several smaller rows is more efficient in most KV stores. For this reason, it provides an abstraction which groups keys together.
 
 # Warning
 This is pre-Alpha. Don't use it unless you know what you are doing. This has not been used in production and makes no guarantees about performance and stability.
+
+# Scalable Collections
+The behaviour of collections was roughly inspired by Redis.
+* Collections remain embedded until a certain size.
+* After reaching a limit, the collection will pop out of being embedded into its own shard in the KV store.
+* A shard will split into smaller chunks if it gets too large.
 
 # Collection Types
 * Maps
