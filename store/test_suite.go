@@ -118,8 +118,9 @@ func RunTestShardFind(t *testing.T, idb IDB) {
         return nil
     })
     err := db.View([]byte("test"), func(txn *Txn) error {
-        it := txn.NewIterator(&IteratorOptions{Prefix: []byte("answer"), StartKey: []byte("0"), Offset: 0, RangeType: RangeClose, Count: -1})
-        fmt.Println(string(it.Item().Key()))
+        it := txn.NewIterator(&IteratorOptions{Prefix: []byte("answer"), StartKey: []byte("0"), EndKey: []byte("5"), Offset: 0, RangeType: RangeClose, Count: -1})
+        it.Seek([]byte("2"))
+        require.Equal(t, string(it.Item().Key()), "testanswer3")
         return nil
     })
     require.NoError(t, err)

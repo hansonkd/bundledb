@@ -24,8 +24,10 @@ type ByteTree struct {
 }
 
 func NewByteTree(rootKey bdb.Key, primType bdb.Decoder, txn *store.Txn, dynamic bool) *ByteTree {
-    root := bdb.NewRoot(rootKey, primType, txn)
-
+    root, err := bdb.NewRootWithDecoder(rootKey, primType, txn)
+    if err != nil {
+        panic(err)
+    }
     var searchPath []bdb.Decoder
     if dynamic {
         searchPath = VarMapPaths
@@ -95,11 +97,11 @@ func SplitKey(key []byte, dynamic bool) ([]bdb.Key, bdb.Key) {
 type ByteMap struct {
     *ByteTree
 }
-func NewByteMap(rootKey bdb.Key, txn *store.Txn) *Map {
+func NewByteMap(rootKey bdb.Key, txn *store.Txn) *ByteMap {
     root := NewByteTree(rootKey, bdb.DecodeTuple, txn, true)
     return &ByteMap{root}
 }
-func NewFixedByteMap(rootKey bdb.Key, txn *store.Txn) *Map {
+func NewFixedByteMap(rootKey bdb.Key, txn *store.Txn) *ByteMap {
     root := NewByteTree(rootKey, bdb.DecodeMap, txn, false)
     return &ByteMap{root}
 }
@@ -128,6 +130,16 @@ func NewByteSet(rootKey bdb.Key, txn *store.Txn) *ByteSet {
 func NewFixedByteSet(rootKey bdb.Key, txn *store.Txn) *ByteSet {
     root := NewByteTree(rootKey, bdb.DecodeSet, txn, false)
     return &ByteSet{root}
+}
+func (mm *ByteSet) Contains(key []byte) (bool, error) {
+    _, e, err := mm.Read(bdb.DecodeSet, key)
+    return e, err
+}
+func (mm *ByteSet) Add(key []byte) (bool, error) {
+    return mm.Write(bdb.DecodeSet, key, nil)
+}
+func (mm *ByteSet) Remove(key []byte) (bool, error) {
+    return mm.Delete(bdb.DecodeSet, key)
 }
 
 func splitBytes(key []byte) []bdb.Key {
