@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/hansonkd/bundledb.svg?style=svg)](https://circleci.com/gh/hansonkd/bundledb) [![](https://godoc.org/github.com/hansonkd/bundledb?status.svg)](http://godoc.org/github.com/hansonkd/bundledb)
+
 # BundleDB
 An embedded DB for Golang with collections that automatically split as they grow.
 
